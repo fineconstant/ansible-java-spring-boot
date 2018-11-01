@@ -59,5 +59,3 @@
     enabled: yes
     state: started
   become: yes
-
-# todo: print gc
