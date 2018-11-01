@@ -1,0 +1,63 @@
+---
+- name: Create {{ webapp_group }} group
+  group:
+    name: "{{ webapp_group }}"
+    state: present
+  become: yes
+
+- name: Create {{ webapp_user }} within {{ webapp_group }} group
+  user:
+    name: "{{ webapp_user }}"
+    group: "{{ webapp_group }}"
+    state: present
+  become: yes
+
+- name: Create {{ webapp_directory }} directory
+  file:
+    path: "{{ webapp_directory }}"
+    owner: "{{ webapp_user }}"
+    group: "{{ webapp_group }}"
+    state: directory
+  become: yes
+
+- name: Check if {{ webapp_systemd_file }} sytemd service exists
+  stat:
+    path: "/etc/systemd/system/{{ webapp_systemd_file }}"
+  register: is_webapp_systemd_installed
+
+- name: Stop {{ webapp_service_name }} sytemd service
+  service:
+    name: "{{ webapp_service_name }}"
+    enabled: yes
+    state: stopped
+  become: yes
+  when: is_webapp_systemd_installed.stat.exists
+
+- name: Install webapp .jar artifact
+  copy:
+    src: webapp/target/webapp-0.0.1-SNAPSHOT.jar
+    dest: "{{ webapp_jar_path }}"
+    owner: "{{ webapp_user }}"
+    group: "{{ webapp_group }}"
+    mode: 0774
+  become: yes
+
+- name: Create systemd service for {{ webapp_jar_name }}
+  template:
+    src: "{{ webapp_systemd_template }}"
+    dest: "/etc/systemd/system/{{ webapp_systemd_file }}"
+  become: yes
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+  become: yes
+
+- name: Enable and start {{ webapp_service_name }} sytemd service
+  service:
+    name: "{{ webapp_service_name }}"
+    enabled: yes
+    state: started
+  become: yes
+
+# todo: print gc

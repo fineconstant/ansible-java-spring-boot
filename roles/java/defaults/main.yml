@@ -1,0 +1,7 @@
+---
+java_tmp_directory: /tmp/java
+java_archive_file: OpenJDK11-jdk_x64_linux_openj9_11.0.1_13.tar.gz
+java_download_url: https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.1%2B13/{{ java_archive_file }}
+java_folder_name: jdk-11.0.1+13
+java_location: /usr/java
+java_home_location: "{{ java_location }}/{{ java_folder_name }}"

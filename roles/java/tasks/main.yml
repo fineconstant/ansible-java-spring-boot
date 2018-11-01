@@ -1,0 +1,61 @@
+---
+- name: Check if java is already installed in "{{ java_location }}/{{ java_folder_name }}"
+  stat:
+    path: "{{ java_location }}/{{ java_folder_name }}"
+  register: is_java_installed
+
+- name: Create {{ java_tmp_directory }} directory
+  file:
+    path: "{{ java_tmp_directory }}"
+    state: directory
+  when: is_java_installed.stat.exists == False
+
+- name: Create {{ java_location }} directory for java installation
+  file:
+    path: "{{ java_location }}"
+    state: directory
+  become: yes
+
+- name: Download and unarchive java binary
+  unarchive:
+    src: "{{ java_download_url }}"
+    dest: "{{ java_tmp_directory }}"
+    remote_src: yes
+  when: is_java_installed.stat.exists == False
+
+- name: Move {{ java_folder_name }} to {{ java_location }}"
+  command: mv "{{ java_tmp_directory }}/{{ java_folder_name }}" "{{ java_location }}/{{ java_folder_name }}"
+  become: yes
+  when: is_java_installed.stat.exists == False
+
+- name: Set JAVA_HOME to {{ java_tmp_directory }}/{{ java_folder_name }}
+  lineinfile:
+    dest: /etc/environment
+    regexp: '^JAVA_HOME'
+    line: "JAVA_HOME={{ java_home_location }}"
+    state: present
+  become: yes
+
+- name: Add new $JAVA_HOME to system wide $PATH
+  copy:
+    content: 'PATH=$PATH:$JAVA_HOME/bin'
+    dest: /etc/profile.d/java-binaries.sh
+  become: yes
+
+- name: Create /usr/bin/java link to java binary
+  file:
+    src: $JAVA_HOME/bin/java
+    dest: /usr/bin/java
+    state: link
+  become: yes
+
+- name: Cleanup "{{ java_tmp_directory }}" directory
+  file:
+    path: "{{ java_tmp_directory }}"
+    state: absent
+
+- name: Remove old java versions from {{ java_location }} directory
+  shell: "ls {{ java_location }} | grep -v {{ java_folder_name }} | xargs rm -rf"
+  args:
+    chdir: "{{ java_location }}"
+  become: yes

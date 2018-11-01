@@ -1,0 +1,19 @@
+[Unit]
+Description=Webapp service
+After=network.target
+
+[Service]
+Type=simple
+
+User={{ webapp_user }}
+Group={{ webapp_group }}
+WorkingDirectory={{ webapp_directory }}
+
+ExecStart={{ webapp_jar_path }}
+SuccessExitStatus=143
+Restart=on-failure
+
+SyslogIdentifier={{ webapp_service_name }}
+
+[Install]
+WantedBy=multi-user.target
