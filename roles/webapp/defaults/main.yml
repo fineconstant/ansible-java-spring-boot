@@ -5,5 +5,6 @@ webapp_group: "{{ webapp_user }}"
 webapp_jar_name: webapp.jar
 webapp_jar_path: "{{ webapp_directory }}/{{ webapp_jar_name }}"
 webapp_systemd_template: webapp.service.j2
-webapp_systemd_file: webapp.service
+webapp_systemd_name: webapp.service
+webapp_systemd_file: "/etc/systemd/system/{{ webapp_systemd_name }}"
 webapp_service_name: webapp

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-cd webapp
-mvn package
+#cd webapp
+#mvn package
+#cd ..
 
-cd ..
 ansible-playbook site.yml --verbose

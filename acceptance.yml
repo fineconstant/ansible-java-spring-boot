@@ -1,0 +1,10 @@
+---
+- name: Common configuration for ACC environment
+  hosts: acceptance
+  roles:
+  - java
+
+- name: ACC webservers configuration
+  hosts: acc-webservers
+  roles:
+  - webapp

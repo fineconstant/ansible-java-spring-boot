@@ -22,7 +22,7 @@
 
 - name: Check if {{ webapp_systemd_file }} sytemd service exists
   stat:
-    path: "/etc/systemd/system/{{ webapp_systemd_file }}"
+    path: "{{ webapp_systemd_file }}"
   register: is_webapp_systemd_installed
 
 - name: Stop {{ webapp_service_name }} sytemd service
@@ -45,7 +45,7 @@
 - name: Create systemd service for {{ webapp_jar_name }}
   template:
     src: "{{ webapp_systemd_template }}"
-    dest: "/etc/systemd/system/{{ webapp_systemd_file }}"
+    dest: "{{ webapp_systemd_file }}"
   become: yes
 
 - name: Reload systemd daemon

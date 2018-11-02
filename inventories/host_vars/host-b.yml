@@ -1,0 +1,2 @@
+---
+ansible_ssh_private_key_file: vagrant-host-b/.vagrant/machines/default/virtualbox/private_key
