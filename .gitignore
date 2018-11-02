@@ -1,4 +1,4 @@
 .idea
-ansible.iml
+*.iml
 *.retry
 .vagrant
